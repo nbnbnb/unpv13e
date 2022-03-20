@@ -16,8 +16,6 @@ int main(int argc, char **argv)
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 
-	printf("ggg response ...\n");
-
 	/* daytime server */
 	servaddr.sin_port = htons(13);
 
