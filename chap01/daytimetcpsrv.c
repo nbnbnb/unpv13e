@@ -26,13 +26,13 @@ int main(int argc, char **argv)
 
 	for (;;)
 	{
+		printf("server response ...\n");
+
 		connfd = Accept(listenfd, (SA *)NULL, NULL);
 
 		ticks = time(NULL);
 		snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
 		Write(connfd, buff, strlen(buff));
-
-		// printf("server response ...");
 
 		Close(connfd);
 	}

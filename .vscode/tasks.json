@@ -3,7 +3,7 @@
         {
             "type": "cppbuild",
             // launch 中的调试任务与此一一对应
-            "label": "GCC 生成活动文件",
+            "label": "GCC-Build",
             "command": "/usr/bin/gcc",
             "args": [
                 "-fdiagnostics-color=always",
