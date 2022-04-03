@@ -12,6 +12,7 @@
                 "/home/zhangjin/projects/unpv13e/src/lib/error.c",
                 "/home/zhangjin/projects/unpv13e/src/lib/wrapsock.c",
                 "/home/zhangjin/projects/unpv13e/src/lib/wrapunix.c",
+                "/home/zhangjin/projects/unpv13e/src/lib/wraplib.c",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",

@@ -32,6 +32,7 @@ int main(int argc, char **argv)
 	servaddr.sin_port = htons(53315);
 
 	// IP 转换
+	// 存储到结构 servaddr.sin_addr 中
 	if (inet_pton(AF_INET, ip, &servaddr.sin_addr) <= 0)
 	{
 		err_quit("inet_pton error for %s", ip);

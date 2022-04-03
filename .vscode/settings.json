@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "unp.h": "c",
-        "config.h": "c"
+        "config.h": "c",
+        "uintn-identity.h": "c"
     }
 }
