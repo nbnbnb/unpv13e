@@ -18,6 +18,7 @@
                 "/home/zhangjin/projects/unpv13e/src/lib/writen.c",
                 "/home/zhangjin/projects/unpv13e/src/lib/str_cli.c",
                 "/home/zhangjin/projects/unpv13e/src/lib/readline.c",
+                "/home/zhangjin/projects/unpv13e/src/lib/signal.c",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",

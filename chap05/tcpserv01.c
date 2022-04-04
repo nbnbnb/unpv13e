@@ -28,6 +28,8 @@ int main(int argc, char **argv)
     // 将套接字转换为一个监听套接字
     Listen(listenfd, LISTENQ);
 
+    printf("Server starting at 127.0.0.1:9877\n");
+
     for (;;)
     {
         clilen = sizeof(cliaddr);
