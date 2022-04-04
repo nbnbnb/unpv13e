@@ -2,6 +2,7 @@
     "files.associations": {
         "unp.h": "c",
         "config.h": "c",
-        "uintn-identity.h": "c"
+        "uintn-identity.h": "c",
+        "sockaddr.h": "c"
     }
 }
