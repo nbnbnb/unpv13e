@@ -30,7 +30,24 @@ int main(int argc, char **argv)
     for (;;)
     {
         clilen = sizeof(cliaddr);
+
+        // 如果在 accept 阻塞时，捕获到一个 SIGCHLD 信号
+        // 内核就会使 accept 返回一个 EINTR 错误
+
+        // 有些系统，不会使内核自动重启被中断的系统调用，于是服务终止
+
+        // Linux 系统自动重启被中断的应用，所以此处不会终止（accept 不会返回错误）
         connfd = Accept(listenfd, (SA *)&cliaddr, &clilen);
+
+        if (connfd < 0)
+        {
+            // 有些系统
+            // 需要处理中断的 accept
+            if (errno == EINTR)
+            {
+                continue;
+            }
+        }
 
         if ((childpid = Fork()) == 0)
         {
