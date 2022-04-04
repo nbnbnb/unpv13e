@@ -16,6 +16,7 @@ void str_cli(FILE *fp, int sockfd)
 		Writen(sockfd, sendline, strlen(sendline));
 
 		// 立马读取响应
+		// 如果收到 FIN，所调用的 readline 立即返回 0（表示 EOF）
 		if (Readline(sockfd, recvline, MAXLINE) == 0)
 		{
 			err_quit("str_cli: server terminated prematurely");
