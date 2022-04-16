@@ -4,7 +4,7 @@ void temp(void);
 
 int main(int argc, char *argv[])
 {
-
+    printf("Compiled on: %s %s\n", __DATE__, __TIME__);
     printf("------ Start ------\n");
     temp();
     printf("------  End  ------\n");
