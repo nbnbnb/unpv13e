@@ -6,6 +6,7 @@
             "label": "GCC-Build",
             "command": "/usr/bin/gcc",
             "args": [
+                "-std=gnu11",
                 "-fdiagnostics-color=always",
                 "-Wformat-overflow=0",
                 "-g",
