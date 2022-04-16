@@ -8,7 +8,7 @@
             "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.run",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

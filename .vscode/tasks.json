@@ -21,7 +21,7 @@
                 "/home/zhangjin/projects/unpv13e/src/lib/signal.c",
                 "${file}",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}",
+                "${fileDirname}/${fileBasenameNoExtension}.run",
                 "-lpthread"
             ],
             "options": {
