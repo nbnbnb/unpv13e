@@ -32,6 +32,8 @@ void str_cli(FILE *fp, int sockfd)
             // 使用 read 和 write 对缓冲区而不是文本行进行操作
             // 使得 select 能够如期的工作
 
+            // read 和 write 直接操作 fd 的缓冲区
+
             // 在套接字上读到 EOF 时
             if ((n = Read(sockfd, buf, MAXLINE)) == 0)
             {
@@ -70,6 +72,7 @@ void str_cli(FILE *fp, int sockfd)
                 /* send FIN */
                 Shutdown(sockfd, SHUT_WR);
 
+                // 清除标记
                 FD_CLR(fileno(fp), &rset);
 
                 continue;

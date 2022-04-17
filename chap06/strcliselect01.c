@@ -1,5 +1,13 @@
 #include "/home/zhangjin/projects/unpv13e/src/lib/unp.h"
 
+/**
+ * @brief 有问题版本
+ * 参考  strcliselect02.c 修订版
+ *
+ * @param fp
+ * @param sockfd
+ */
+
 void str_cli(FILE *fp, int sockfd)
 {
     // 最大描述符数
