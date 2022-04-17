@@ -23,7 +23,8 @@ void str_cli(FILE *fp, int sockfd)
         // 对应套接字 sockfd
         FD_SET(sockfd, &rset);
 
-        // 计算最大描述符数
+        // 待测试的描述符个数
+        // 设置为待测试的最大描述符加 1
         maxfdp1 = max(fileno(fp), sockfd) + 1;
 
         // 系统调用 select

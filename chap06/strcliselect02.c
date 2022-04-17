@@ -14,8 +14,6 @@ void str_cli(FILE *fp, int sockfd)
 
     for (;;)
     {
-        // 如果标准输入可读
-        // 则加入到 select 中
         if (stdineof == 0)
         {
             FD_SET(fileno(fp), &rset);
@@ -23,6 +21,8 @@ void str_cli(FILE *fp, int sockfd)
 
         FD_SET(sockfd, &rset);
 
+        // 待测试的描述符个数
+        // 设置为待测试的最大描述符加 1
         maxfdp1 = max(fileno(fp), sockfd) + 1;
 
         Select(maxfdp1, &rset, NULL, NULL, NULL);
