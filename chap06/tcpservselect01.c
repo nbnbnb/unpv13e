@@ -107,6 +107,12 @@ int main(int argc, char **argv)
                 maxi = i;
             }
 
+            // 这个地方是个关键点
+            // 和代码位置有关系
+
+            // 如果 listenfd 返回了，则表示使用了一个 nready
+            // nready 减去 1 之后，如果位为 0 了，就表示没有 sockfd 返回了
+            // 所以不用执行下面的 sockfd 迭代代码
             if (--nready <= 0)
             {
                 /* no more readable descriptors */
@@ -148,6 +154,8 @@ int main(int argc, char **argv)
                     Writen(sockfd, buf, n);
                 }
 
+                // 没有可用 sockfd 了
+                // client 停止迭代
                 if (--nready <= 0)
                 {
                     /* no more readable descriptors */
