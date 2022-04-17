@@ -66,6 +66,7 @@ void str_cli(FILE *fp, int sockfd)
                 stdineof = 1;
 
                 // 把第二个参数设置为 SHUT_WR 来调用 shutdown 以发送 FIN
+                // 关闭连续的写这一半
                 /* send FIN */
                 Shutdown(sockfd, SHUT_WR);
 
