@@ -6,7 +6,15 @@
 // 内核不再需要知道类似 fd_set 的固定大小的数据类型
 #define OPEN_MAX 1024
 
-#define NOTDEF
+/**
+ * @brief 测试
+ *
+ * 先启动服务端
+ *
+ * 然后执行客户端
+ * /home/zhangjin/projects/unpv13e/chap05/tcpcli01.run
+ *
+ */
 
 int main(int argc, char **argv)
 {
@@ -14,6 +22,7 @@ int main(int argc, char **argv)
     int nready;
     ssize_t n;
     char buf[MAXLINE];
+    char addr[MAXLINE];
     socklen_t clilen;
     struct pollfd client[OPEN_MAX];
     struct sockaddr_in cliaddr, servaddr;
@@ -66,9 +75,9 @@ int main(int argc, char **argv)
             clilen = sizeof(cliaddr);
             connfd = Accept(listenfd, (SA *)&cliaddr, &clilen);
 
-#ifdef NOTDEF           
-            printf("new client: %s, port %d\n", Inet_ntop(AF_INET, &cliaddr.sin_addr, 4, NULL), ntohs(cliaddr.sin_port));
-#endif
+            // Inet_ntop 函数将套接字结构中的 32 位 IP 地址转换为一个点分十进制数 ASCII 字符串
+            // ntohs 函数将 16 位的端口号从网络字节序转换为主机字节序
+            printf("connection from %s, port %d\n", Inet_ntop(AF_INET, &cliaddr.sin_addr, addr, sizeof(addr)), ntohs(cliaddr.sin_port));
 
             // 客户端数组的大小就是 OPEN_MAX
             for (i = 1; i < OPEN_MAX; i++)

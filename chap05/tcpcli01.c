@@ -17,6 +17,7 @@ int main(int argc, char **argv)
 
     /* do it all */
     str_cli(stdin, sockfd);
+    
 
     exit(0);
 }

@@ -2,6 +2,16 @@
 
 #define NOTDEF
 
+/**
+ * @brief 测试
+ *
+ * 先启动服务端
+ *
+ * 然后执行客户端
+ * /home/zhangjin/projects/unpv13e/chap05/tcpcli01.run
+ *
+ */
+
 int main(int argc, char **argv)
 {
     int i, maxi, maxfd, listenfd, connfd, sockfd;
@@ -11,6 +21,7 @@ int main(int argc, char **argv)
     // fd_set 结构是 select 需要的
     fd_set rset, allset;
     char buf[MAXLINE];
+    char addr[MAXLINE];
     socklen_t clilen;
     struct sockaddr_in cliaddr, servaddr;
 
@@ -74,9 +85,9 @@ int main(int argc, char **argv)
             // 返回一个 "已连接描述符"
             connfd = Accept(listenfd, (SA *)&cliaddr, &clilen);
 
-#ifdef NOTDEF
-            printf("new client: %s, port %d\n", Inet_ntop(AF_INET, &cliaddr.sin_addr, 4, NULL), ntohs(cliaddr.sin_port));
-#endif
+            // Inet_ntop 函数将套接字结构中的 32 位 IP 地址转换为一个点分十进制数 ASCII 字符串
+            // ntohs 函数将 16 位的端口号从网络字节序转换为主机字节序
+            printf("connection from %s, port %d\n", Inet_ntop(AF_INET, &cliaddr.sin_addr, addr, sizeof(addr)), ntohs(cliaddr.sin_port));
 
             // 客户端数组的大小就是 FD_SETSIZE
             for (i = 0; i < FD_SETSIZE; i++)
