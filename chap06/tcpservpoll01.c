@@ -1,17 +1,21 @@
 #include "/home/zhangjin/projects/unpv13e/src/lib/unp.h"
 
+// 设置最大客户端数量
+// 有了 poll 就不再有数量限制的问题了
+// 因为分配一个 pollfd 结构数组并把该数组元素的数目通知内核成了调用者的责任
+// 内核不再需要知道类似 fd_set 的固定大小的数据类型
+#define OPEN_MAX 1024
+
 #define NOTDEF
 
 int main(int argc, char **argv)
 {
-    int i, maxi, maxfd, listenfd, connfd, sockfd;
-    // FD_SETSIZE 是内核编译时也使用的一个常量，默认是 1024
-    int nready, client[FD_SETSIZE];
+    int i, maxi, listenfd, connfd, sockfd;
+    int nready;
     ssize_t n;
-    // fd_set 结构是 select 需要的
-    fd_set rset, allset;
     char buf[MAXLINE];
     socklen_t clilen;
+    struct pollfd client[OPEN_MAX];
     struct sockaddr_in cliaddr, servaddr;
 
     listenfd = Socket(AF_INET, SOCK_STREAM, 0);
@@ -27,88 +31,68 @@ int main(int argc, char **argv)
 
     Listen(listenfd, LISTENQ);
 
-    /* initialize */
-    maxfd = listenfd;
-
-    /* index into client[] array */
-    maxi = -1;
+    // 第一项设置为 listenfd
+    client[0].fd = listenfd;
+    // 第一项设置 POLLRDNORM 事件，这样当有新的连接准备好被接受时
+    // poll 将通知我们
+    client[0].events = POLLRDNORM;
 
     // client 数组，记录 "已连接描述符"
     // 将其初始化为 -1
-    for (i = 0; i < FD_SETSIZE; i++)
+    for (i = 1; i < OPEN_MAX; i++)
     {
         /* -1 indicates available entry */
-        client[i] = -1;
+        client[i].fd = -1;
     }
 
-    // 初始化 fd_set
-    FD_ZERO(&allset);
-
-    // 将 listenfd 添加到 allset
-    FD_SET(listenfd, &allset);
+    // maxi 变量含有 client 数组当前正在使用的最大下标值
+    /* max index into client[] array */
+    maxi = 0;
 
     for (;;)
     {
-        /* structure assignment */
-        // 由于传入 select 的 fd_set 会修改
-        // 所以，此处复制一个
-        rset = allset;
-
-        // 开始 select
+        // 调用 poll 函数
         // 返回就绪的个数
-        // 同时 rset 也会被修改，标识那些位被设置了
-        nready = Select(maxfd + 1, &rset, NULL, NULL, NULL);
+        nready = Poll(client, maxi + 1, INFTIM);
 
-        // 如果从 select 返回
+        // 如果从 poll 返回
         // 则表示有事件响应
 
         // 首先判断是否为 listenfd 的事件
-        // 通过 FD_ISSET 宏进行判断
-        if (FD_ISSET(listenfd, &rset))
+        // 检测条件是判断 POLLRDNORM 位是否被设置
+        if (client[0].revents & POLLRDNORM)
         {
             /* new client connection */
-            // 表示新接入的客户端信息
             clilen = sizeof(cliaddr);
-
-            // 调用 accept
-            // 返回一个 "已连接描述符"
             connfd = Accept(listenfd, (SA *)&cliaddr, &clilen);
 
-#ifdef NOTDEF
+#ifdef NOTDEF           
             printf("new client: %s, port %d\n", Inet_ntop(AF_INET, &cliaddr.sin_addr, 4, NULL), ntohs(cliaddr.sin_port));
 #endif
 
-            // 客户端数组的大小就是 FD_SETSIZE
-            for (i = 0; i < FD_SETSIZE; i++)
+            // 客户端数组的大小就是 OPEN_MAX
+            for (i = 1; i < OPEN_MAX; i++)
             {
                 // 如果有一个槽位（-1）
-                if (client[i] < 0)
+                if (client[i].fd < 0)
                 {
                     /* save descriptor */
                     // 将 "已连接描述符" 保存到客户端数组中
-                    client[i] = connfd;
+                    client[i].fd = connfd;
                     break;
                 }
             }
 
             // 如果没有槽位（退出）
-            if (i == FD_SETSIZE)
+            if (i == OPEN_MAX)
             {
                 err_quit("too many clients");
             }
 
-            /* add new descriptor to set */
-            // 将 "已连接描述符" 添加到 select
-            FD_SET(connfd, &allset);
+            // 设置需要监听的事件
+            client[i].events = POLLRDNORM;
 
-            // 计算最大描述符数
-            if (connfd > maxfd)
-            {
-                /* for select */
-                maxfd = connfd;
-            }
-
-            // 计算最大描述符对应在 client 中的索引
+            // 计算 client 中的最大索引
             if (i > maxi)
             {
                 /* max index in client[] array */
@@ -129,32 +113,57 @@ int main(int argc, char **argv)
         }
 
         // 迭代 client 中的每一项 sockfd
-        for (i = 0; i <= maxi; i++)
+        for (i = 1; i <= maxi; i++)
         {
             /* check all clients for data */
             // 如果是 -1，则继续迭代
-            if ((sockfd = client[i]) < 0)
+            if ((sockfd = client[i].fd) < 0)
             {
                 continue;
             }
 
-            // 如果 select 中返回的与 client 匹配
-            if (FD_ISSET(sockfd, &rset))
+            // 此处检查两个返回事件 POLLRDNORM | POLLERR
+
+            // 我们检查 POLLERR 的原因在于：
+            // 有些实现在一个连接上收到 RST 时返回的是 POLLERR 事件，而其他实现返回的只是 POLLRDNORM 事件
+            // 无论哪种情形，我们都调用 read
+            if (client[i].revents & (POLLRDNORM | POLLERR))
             {
                 // 将 sockfd 中的数据读入 buf 中
-                if ((n = Read(sockfd, buf, MAXLINE)) == 0)
+                if ((n = read(sockfd, buf, MAXLINE)) < 0)
+                {
+                    // 当一个现有的连接，由它的客户端终止时
+                    // 我们就把它的 fd 成员设置为 -1
+                    if (errno == ECONNRESET)
+                    {
+                        /*4connection reset by client */
+#ifdef NOTDEF
+                        printf("client[%d] aborted connection\n", i);
+#endif
+                        // 服务器端关闭
+                        Close(sockfd);
+                        // 从 client 中清除
+                        client[i].fd = -1;
+                    }
+                    else
+                    {
+                        // 其它未知错误
+                        // 关闭服务器
+                        err_sys("read error");
+                    }
+                }
+                else if (n == 0)
                 {
                     // 如果 EOF
 
-                    /*connection closed by client */
+                    /*4connection closed by client */
+#ifdef NOTDEF
+                    printf("client[%d] closed connection\n", i);
+#endif
                     // 服务器端关闭
                     Close(sockfd);
-
-                    // 从 allset 中清除
-                    FD_CLR(sockfd, &allset);
-
                     // 从 client 中清除
-                    client[i] = -1;
+                    client[i].fd = -1;
                 }
                 else
                 {
