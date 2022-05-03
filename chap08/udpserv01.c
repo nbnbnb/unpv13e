@@ -1,6 +1,6 @@
 #include "/home/zhangjin/projects/unpv13e/src/lib/unp.h"
-#include "dgecholoop1.c"
-#include "dgecholoop2.c"
+// #include "dgecholoop1.c"
+// #include "dgecholoop2.c"
 
 int main(int argc, char **argv)
 {
@@ -19,12 +19,12 @@ int main(int argc, char **argv)
 
     Bind(sockfd, (SA *)&servaddr, sizeof(servaddr));
 
-    // dg_echo(sockfd, (SA *)&cliaddr, sizeof(cliaddr));
+    dg_echo(sockfd, (SA *)&cliaddr, sizeof(cliaddr));
 
     // 对接收到的数据报进行计数
     // dg_echo_loop(sockfd, (SA *)&cliaddr, sizeof(cliaddr));
 
     // 对接收到的数据报进行计数
     // 同时设置了 SO_RCVBUF 选项
-    dg_echo_loop_with_rcvbuf(sockfd, (SA *)&cliaddr, sizeof(cliaddr));
+    // dg_echo_loop_with_rcvbuf(sockfd, (SA *)&cliaddr, sizeof(cliaddr));
 }
