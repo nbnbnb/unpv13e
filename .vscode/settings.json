@@ -3,6 +3,7 @@
         "unp.h": "c",
         "config.h": "c",
         "uintn-identity.h": "c",
-        "sockaddr.h": "c"
+        "sockaddr.h": "c",
+        "tcp.h": "c"
     }
 }
