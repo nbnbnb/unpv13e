@@ -20,6 +20,8 @@
                 "/home/zhangjin/projects/unpv13e/src/lib/str_cli.c",
                 "/home/zhangjin/projects/unpv13e/src/lib/readline.c",
                 "/home/zhangjin/projects/unpv13e/src/lib/signal.c",
+                "/home/zhangjin/projects/unpv13e/src/lib/dg_echo.c",
+                "/home/zhangjin/projects/unpv13e/src/lib/dg_cli.c",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}.run",
